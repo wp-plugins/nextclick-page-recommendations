@@ -1,0 +1,18 @@
+<script type="text/javascript" data-key="__WIDGET_KEY__">
+  var __nc_widgets = __nc_widgets || [];
+  var __nc_j = __nc_j || null;
+
+  var
+    __nc_page_image_url = '__NC_PAGE_IMAGE_URL__',
+    __nc_page_title = '__NC_PAGE_TITLE__',
+    __nc_page_created_at = '__NC_PAGE_CREATED_AT__',
+    __nc_page_description = '__NC_PAGE_DESCRIPTION__';
+
+  __nc_widgets.push(['__WIDGET_KEY__', '__WEBSITE_HOST__', '__WIDGET_TYPE__', 1, __WIDGET_COLLECT_MODE__]);
+
+  (function() {
+    var __nc = document.createElement('script'); __nc.type = 'text/javascript'; __nc.async = true; __nc.id = 'Nextclick_Manager';
+    __nc.src = 'http://nextclick.pl/widget/widget.__WIDGET_TYPE__.1.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(__nc, s);
+  })();
+</script>

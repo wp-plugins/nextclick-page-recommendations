@@ -26,6 +26,9 @@ Remember: You should already have your Nextclick widget configured via your http
 
 == Screenshots ==
 
+1. Below it is presented where to get the Nextclick Widget key from.
+2. Here is the Nextclick Page Recommendations widget shown with an already placed key.
+
 == Changelog ==
 
 = 1.0.0 =

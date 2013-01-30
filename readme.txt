@@ -26,8 +26,9 @@ Remember: You should already have your Nextclick widget configured via your http
 
 == Screenshots ==
 
-1. Below it is presented where to get the Nextclick Widget key from.
-2. Here is the Nextclick Page Recommendations widget shown with an already placed key.
+1. Working Nextclick widget on a WordPress site.
+2. Above is presented where to get the Nextclick Widget key from.
+3. Here is the Nextclick Page Recommendations widget shown with an already placed key.
 
 == Changelog ==
 

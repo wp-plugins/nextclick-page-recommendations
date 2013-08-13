@@ -36,4 +36,8 @@ First launch of official Nextclick Page Recommendations widget (by LeadBullet S.
 
 Overload of neatest_trim function which occasionally happens to be missing in some WordPress instances
 
+= 1.2.0 =
+
+Strip html tags in page title and page description
+
 == Upgrade Notice ==

@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.1.0
+Version: 1.2.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -106,8 +106,8 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
       $this->ncPageVariables = Array(
         '__NC_PAGE_IMAGE_URL__' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
-        '__NC_PAGE_TITLE__' => esc_js($post->post_title),
-        '__NC_PAGE_DESCRIPTION__' => esc_js($this->neatest_trim($post->post_content, 360)),
+        '__NC_PAGE_TITLE__' => strip_tags(htmlspecialchars_decode(esc_js($post->post_title))),
+        '__NC_PAGE_DESCRIPTION__' => strip_tags(htmlspecialchars_decode(esc_js($this->neatest_trim($post->post_content, 360)))),
         '__NC_PAGE_CREATED_AT__' => $post->post_date,
       );
     }

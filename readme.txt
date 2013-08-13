@@ -26,14 +26,14 @@ Remember: You should already have your Nextclick widget configured via your http
 
 == Screenshots ==
 
-1. Working Nextclick widget on a WordPress site.
-2. Above is presented where to get the Nextclick Widget key from.
-3. Here is the Nextclick Page Recommendations widget shown with an already placed key.
-
 == Changelog ==
 
 = 1.0.0 =
 
 First launch of official Nextclick Page Recommendations widget (by LeadBullet S.A)
+
+= 1.1.0 =
+
+Overload of neatest_trim function which occasionally happens to be missing in some WordPress instances
 
 == Upgrade Notice ==

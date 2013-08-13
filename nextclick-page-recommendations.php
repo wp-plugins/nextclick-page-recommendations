@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.0.0
+Version: 1.1.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -71,7 +71,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
         )
     );
 
-    $this->websiteHost = $_SERVER['HTTP_HOST'];
+    $this->websiteHost = str_replace('www.', '', $_SERVER['HTTP_HOST']);
     $this->ncPageVariables = Array(
       '__NC_PAGE_IMAGE_URL__' => '',
       '__NC_PAGE_TITLE__' => '',
@@ -107,7 +107,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       $this->ncPageVariables = Array(
         '__NC_PAGE_IMAGE_URL__' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
         '__NC_PAGE_TITLE__' => esc_js($post->post_title),
-        '__NC_PAGE_DESCRIPTION__' => esc_js(neatest_trim($post->post_content, 360)),
+        '__NC_PAGE_DESCRIPTION__' => esc_js($this->neatest_trim($post->post_content, 360)),
         '__NC_PAGE_CREATED_AT__' => $post->post_date,
       );
     }
@@ -220,6 +220,28 @@ class Nextclick_Page_Recommendations extends WP_Widget {
     }
 
     return $widgetScript;
+  }
+  
+   /**
+   * Overload neatest_trim function which is not present in all WordPress versions
+   * 
+   * @param string $content
+   * @param int $chars
+   * @return string
+   */
+  private function neatest_trim($content, $chars) {
+    if (strlen($content) > $chars) {
+      $content = str_replace('&nbsp;', ' ', $content);
+      $content = str_replace("\n", '', $content);
+      // use with wordpress    
+      $content = strip_tags(strip_shortcodes(trim($content)));
+      //$content = strip_tags(trim($content));
+      $content = preg_replace('/\s+?(\S+)?$/', '', mb_substr($content, 0, $chars, "UTF-8"));
+      $content = trim($content);
+      if (substr($content, -1) == ',') $content = substr($content, 0, -1);
+      if (substr($content, -1) != '.') $content .= '...';
+    }
+    return $content;
   }
 }
 

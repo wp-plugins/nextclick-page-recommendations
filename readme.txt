@@ -4,7 +4,7 @@ Donate link: http://www.leadbullet.pl/
 Tags: widget, nextclick, leadbullet, seo
 Requires at least: 2.8
 Tested up to: 3.5.1
-Stable tag: 1.0.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,5 +39,9 @@ Overload of neatest_trim function which occasionally happens to be missing in so
 = 1.2.0 =
 
 Strip html tags in page title and page description
+
+= 1.3.0 =
+
+Do not collect category and archive pages
 
 == Upgrade Notice ==

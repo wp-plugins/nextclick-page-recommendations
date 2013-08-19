@@ -188,7 +188,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
    */
   private function validateDisplayConditions()
   {
-    if (is_singular() && !current_user_can('manage_options')) {
+    if (is_single() && !current_user_can('manage_options')) {
       $this->widgetCollectMode = 1;
     }
 

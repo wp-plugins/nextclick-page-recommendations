@@ -26,6 +26,10 @@ Remember: You should already have your Nextclick widget configured via your http
 
 == Screenshots ==
 
+1. Nextclick widget
+2. Widget code
+3. Plugin inserted in left column
+
 == Changelog ==
 
 = 1.0.0 =

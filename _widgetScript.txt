@@ -3,6 +3,7 @@
   var __nc_j = __nc_j || null;
 
   var
+    __nc_page_url = '__NC_PAGE_URL__',
     __nc_page_image_url = '__NC_PAGE_IMAGE_URL__',
     __nc_page_title = '__NC_PAGE_TITLE__',
     __nc_page_created_at = '__NC_PAGE_CREATED_AT__',

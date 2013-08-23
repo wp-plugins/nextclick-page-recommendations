@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.3.0
+Version: 1.4.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -73,6 +73,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
     $this->websiteHost = str_replace('www.', '', $_SERVER['HTTP_HOST']);
     $this->ncPageVariables = Array(
+      '__NC_PAGE_URL__' => '',
       '__NC_PAGE_IMAGE_URL__' => '',
       '__NC_PAGE_TITLE__' => '',
       '__NC_PAGE_DESCRIPTION__' => '',
@@ -105,9 +106,10 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       $post = $wp_query->get_queried_object();
 
       $this->ncPageVariables = Array(
+        '__NC_PAGE_URL__' => get_permalink($post->ID),
         '__NC_PAGE_IMAGE_URL__' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
         '__NC_PAGE_TITLE__' => strip_tags(htmlspecialchars_decode(esc_js($post->post_title))),
-        '__NC_PAGE_DESCRIPTION__' => strip_tags(htmlspecialchars_decode(esc_js($this->neatest_trim($post->post_content, 360)))),
+        '__NC_PAGE_DESCRIPTION__' => strip_tags(htmlspecialchars_decode(esc_js($this->neatest_trim(preg_replace('/\[[^\]]+\]/', '', $post->post_content), 360)))),
         '__NC_PAGE_CREATED_AT__' => $post->post_date,
       );
     }
@@ -188,7 +190,11 @@ class Nextclick_Page_Recommendations extends WP_Widget {
    */
   private function validateDisplayConditions()
   {
-    if (is_single() && !current_user_can('manage_options')) {
+    if (
+      !is_singular('post') ||
+      current_user_can('manage_options') ||
+      get_permalink() != 'http' . ($_SERVER["HTTPS"] != 'off' ? 's' : '') . '://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]
+    ) { 
       $this->widgetCollectMode = 1;
     }
 

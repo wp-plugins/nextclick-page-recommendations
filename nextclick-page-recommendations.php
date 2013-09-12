@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.4.0
+Version: 1.5.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -190,10 +190,12 @@ class Nextclick_Page_Recommendations extends WP_Widget {
    */
   private function validateDisplayConditions()
   {
+    $isSecure = (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') ? true : false;
+
     if (
-      !is_singular('post') ||
-      current_user_can('manage_options') ||
-      get_permalink() != 'http' . ($_SERVER["HTTPS"] != 'off' ? 's' : '') . '://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]
+      is_singular('post') &&
+      !current_user_can('manage_options') &&
+      get_permalink() == 'http' . ($isSecure ? 's' : '') . '://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]
     ) { 
       $this->widgetCollectMode = 1;
     }
@@ -210,7 +212,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   {
     $widgetScript = '';
     $widgetScriptFilename = dirname(__FILE__) . '/' . '_widgetScript.txt';
-    
+
     if (is_readable($widgetScriptFilename)) {
       $widgetScript = file_get_contents($widgetScriptFilename);      
       $widgetScript = str_replace(
@@ -227,7 +229,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
     return $widgetScript;
   }
-  
+
    /**
    * Overload neatest_trim function which is not present in all WordPress versions
    * 

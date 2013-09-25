@@ -37,10 +37,12 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   
   const FORM_PARAM_WIDGET_KEY= 'nextclickWidgetKey';
   const FORM_PARAM_WIDGET_TYPE = 'nextclickWidgetType';
+  const FORM_PARAM_WIDGET_DOMAIN = 'nextclickWidgetDomain';
   
   public static $FORM_ATTRIBUTES = Array(
       self::FORM_PARAM_WIDGET_KEY => 'Klucz widgeta',
       self::FORM_PARAM_WIDGET_TYPE => 'Typ widgeta',
+      self::FORM_PARAM_WIDGET_DOMAIN => 'Domena widgeta (jeśli nie wiesz co tu wpisać, zostaw puste)',
   );
 
   public static $WIDGET_TYPES = array(
@@ -54,6 +56,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   private $websiteHost;
   private $widgetKey;
   private $widgetType;
+  private $widgetDomain;
   private $widgetCollectMode = 0;
   private $ncPageVariables = Array();
 
@@ -95,6 +98,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
     $this->widgetKey = apply_filters( 'nextclickWidgetKey', $instance['nextclickWidgetKey'] );
     $this->widgetType = apply_filters( 'nextclickWidgetType', $instance['nextclickWidgetType'] );
+    $this->widgetDomain = apply_filters( 'nextclickWidgetDomain', $instance['nextclickWidgetDomain'] );
 
     if (!$this->validateDisplayConditions()) {
       return;
@@ -139,8 +143,8 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       $instance[$property] = $value;
       
       unset($instance['errors'][$property]);
-      
-      if (empty($instance[$property])) {
+
+      if (empty($instance[$property]) && $property != self::FORM_PARAM_WIDGET_DOMAIN) {
         $instance['errors'][$property] = "(Pole wymagane)";
       }
     }
@@ -175,9 +179,14 @@ class Nextclick_Page_Recommendations extends WP_Widget {
           }
 
     $formAttributesPanel .=
-        "</select>
-      </label>
-    </p>";
+          "</select>
+        </label>
+      </p>
+      <p>
+        <label for=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_DOMAIN) . "\">
+          " . self::$FORM_ATTRIBUTES[self::FORM_PARAM_WIDGET_DOMAIN] . ": <span style=\"color: red;\">" . $instance['errors'][self::FORM_PARAM_WIDGET_DOMAIN] . "</span><input class=\"widefat\" id=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_DOMAIN) . "\" name=\"" . $this->get_field_name(self::FORM_PARAM_WIDGET_DOMAIN) . "\" type=\"text\" value=\"" . $instance[self::FORM_PARAM_WIDGET_DOMAIN] . "\" />
+        </label>
+      </p>";
 
     echo $formAttributesPanel;
   }
@@ -217,7 +226,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       $widgetScript = file_get_contents($widgetScriptFilename);      
       $widgetScript = str_replace(
                         Array('__WEBSITE_HOST__', '__WIDGET_KEY__', '__WIDGET_TYPE__', '__WIDGET_COLLECT_MODE__'),
-                        Array($this->websiteHost, $this->widgetKey, $this->widgetType, $this->widgetCollectMode),
+                        Array((!empty($this->widgetDomain) ? $this->widgetDomain : $this->websiteHost), $this->widgetKey, $this->widgetType, $this->widgetCollectMode),
                         $widgetScript
                       );
 

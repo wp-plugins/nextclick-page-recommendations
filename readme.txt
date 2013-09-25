@@ -56,4 +56,8 @@ Do not collect gallery pages, unnecessary forum pages & shortcode descriptions
 
 Updated page type classification requirements + serving https sites
 
+= 1.6.0 =
+
+Added field for custom domain
+
 == Upgrade Notice ==

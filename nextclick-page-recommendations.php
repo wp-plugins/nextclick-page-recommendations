@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.7.0
+Version: 1.8.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -38,11 +38,13 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   const FORM_PARAM_WIDGET_KEY= 'nextclickWidgetKey';
   const FORM_PARAM_WIDGET_TYPE = 'nextclickWidgetType';
   const FORM_PARAM_WIDGET_DOMAIN = 'nextclickWidgetDomain';
+  const FORM_PARAM_WIDGET_EMPTY_COLLECT = 'nextclickWidgetEmptyCollect';
   
   public static $FORM_ATTRIBUTES = Array(
       self::FORM_PARAM_WIDGET_KEY => 'Klucz widgeta',
       self::FORM_PARAM_WIDGET_TYPE => 'Typ widgeta',
       self::FORM_PARAM_WIDGET_DOMAIN => 'Domena widgeta (jeśli nie wiesz co tu wpisać, zostaw puste)',
+      self::FORM_PARAM_WIDGET_EMPTY_COLLECT => 'Wyłącz zbieranie danych z informacji przesyłanych przez WordPress',
   );
 
   public static $WIDGET_TYPES = array(
@@ -57,6 +59,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   private $widgetKey;
   private $widgetType;
   private $widgetDomain;
+  private $widgetEmptyCollect;
   private $widgetCollectMode = 0;
   private $ncPageVariables = Array();
 
@@ -99,6 +102,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
     $this->widgetKey = apply_filters( 'nextclickWidgetKey', $instance['nextclickWidgetKey'] );
     $this->widgetType = apply_filters( 'nextclickWidgetType', $instance['nextclickWidgetType'] );
     $this->widgetDomain = apply_filters( 'nextclickWidgetDomain', $instance['nextclickWidgetDomain'] );
+    $this->widgetEmptyCollect = apply_filters( 'nextclickWidgetEmptyCollect', $instance['nextclickWidgetEmptyCollect'] );
 
     if (!$this->validateDisplayConditions()) {
       return;
@@ -149,6 +153,8 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       }
     }
 
+    $instance[self::FORM_PARAM_WIDGET_EMPTY_COLLECT] = isset($new_instance['nextclickWidgetEmptyCollect']) ? 1 : 0;
+
     return $instance;
   }
 
@@ -161,6 +167,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
    */
   public function form($instance)
   {
+    $checked = $instance[self::FORM_PARAM_WIDGET_EMPTY_COLLECT] ? "checked" : "";
     $formAttributesPanel =
       "<p>
         <label for=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_KEY) . "\">
@@ -179,16 +186,49 @@ class Nextclick_Page_Recommendations extends WP_Widget {
           }
 
     $formAttributesPanel .=
-          "</select>
-        </label>
-      </p>
+        "</select>
+      </label>
+    </p>
+    <p>
+      <a href=\"#\" class=\"advanced_options_link\">ROZWIŃ OPCJE ZAAWANSOWANE</a>
+    </p>
+    <div class=\"advanced_options\" style=\"display: none\">
       <p>
         <label for=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_DOMAIN) . "\">
           " . self::$FORM_ATTRIBUTES[self::FORM_PARAM_WIDGET_DOMAIN] . ": <span style=\"color: red;\">" . $instance['errors'][self::FORM_PARAM_WIDGET_DOMAIN] . "</span><input class=\"widefat\" id=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_DOMAIN) . "\" name=\"" . $this->get_field_name(self::FORM_PARAM_WIDGET_DOMAIN) . "\" type=\"text\" value=\"" . $instance[self::FORM_PARAM_WIDGET_DOMAIN] . "\" />
         </label>
-      </p>";
+      </p>
+      <p>
+        <label for=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_EMPTY_COLLECT) . "\">
+          <input id=\"" . $this->get_field_id(self::FORM_PARAM_WIDGET_EMPTY_COLLECT) . "\" name=\"" . $this->get_field_name(self::FORM_PARAM_WIDGET_EMPTY_COLLECT) . "\" type=\"checkbox\" value=\"" . $instance[self::FORM_PARAM_WIDGET_EMPTY_COLLECT] . "\" " . $checked . " />
+          " . self::$FORM_ATTRIBUTES[self::FORM_PARAM_WIDGET_EMPTY_COLLECT] . "
+        </label>
+      </p>
+    </div>";
+    
+    $formAttributesPanel .= $this->appendJquery();
 
     echo $formAttributesPanel;
+  }
+  
+  /**
+   * Append jQuery script for enabling plugin advanced options
+   * 
+   * @return string
+   */
+  private function appendJquery()
+  {
+    return "
+      <script type=\"text/javascript\">
+        jQuery(document).ready(function($){
+          $('.advanced_options_link').click(function(){
+            $('.advanced_options').slideDown();
+
+            return false;
+          });
+        });
+      </script>
+      ";
   }
 
   /**
@@ -258,7 +298,6 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       if (substr($content, -1) == ',') $content = substr($content, 0, -1);
       if (substr($content, -1) != '.') $content .= '...';
     }
-
     return $content;
   }
 }

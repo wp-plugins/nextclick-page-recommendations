@@ -108,7 +108,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       return;
     }
 
-    if ($this->widgetCollectMode) {
+    if ($this->widgetCollectMode && !$this->widgetEmptyCollect) {
       global $wp_query;
 
       $post = $wp_query->get_queried_object();

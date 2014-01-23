@@ -3,8 +3,8 @@ Contributors: LeadBullet S.A
 Donate link: http://www.leadbullet.pl/
 Tags: widget, nextclick, leadbullet, seo
 Requires at least: 2.8
-Tested up to: 3.7.1
-Stable tag: 1.8.0
+Tested up to: 3.8
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,5 +68,9 @@ Strip html comment tags from collected post content
 
 Allow for not collecting data directly from WordPress available info (let widget collect data from page og & meta tags).
 Domain and widget collecting type options moved to hidden advanved options.
+
+= 1.9.0 =
+
+Pass post tags to widget
 
 == Upgrade Notice ==

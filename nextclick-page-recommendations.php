@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 1.8.0
+Version: 1.9.0
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,10 +12,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 /*
 
-Copyright 2013 LeadBullet S.A (kontakt@leadbullet.pl)
+Copyright 2014 LeadBullet S.A (kontakt@leadbullet.pl)
 
 this program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License, version 2, as 
+it under the terms of the GNU General Public License, version 2, as
 published by the Free Software Foundation.
 
 This program is distributed in the hope that it will be useful,
@@ -34,12 +34,12 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   // Available Nextclick widget types
   const TYPE_STANDARD_BOX = 'recommendation';
   const TYPE_FLOATING_BOX = 'floating';
-  
+
   const FORM_PARAM_WIDGET_KEY= 'nextclickWidgetKey';
   const FORM_PARAM_WIDGET_TYPE = 'nextclickWidgetType';
   const FORM_PARAM_WIDGET_DOMAIN = 'nextclickWidgetDomain';
   const FORM_PARAM_WIDGET_EMPTY_COLLECT = 'nextclickWidgetEmptyCollect';
-  
+
   public static $FORM_ATTRIBUTES = Array(
       self::FORM_PARAM_WIDGET_KEY => 'Klucz widgeta',
       self::FORM_PARAM_WIDGET_TYPE => 'Typ widgeta',
@@ -84,6 +84,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       '__NC_PAGE_TITLE__' => '',
       '__NC_PAGE_DESCRIPTION__' => '',
       '__NC_PAGE_CREATED_AT__' => '',
+      '__NC_PAGE_KEYWORDS__' => '',
     );
   }
 
@@ -108,18 +109,31 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       return;
     }
 
-    if ($this->widgetCollectMode && !$this->widgetEmptyCollect) {
+    if ($this->widgetCollectMode) {
       global $wp_query;
 
       $post = $wp_query->get_queried_object();
 
-      $this->ncPageVariables = Array(
-        '__NC_PAGE_URL__' => get_permalink($post->ID),
-        '__NC_PAGE_IMAGE_URL__' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
-        '__NC_PAGE_TITLE__' => strip_tags(htmlspecialchars_decode(esc_js($post->post_title))),
-        '__NC_PAGE_DESCRIPTION__' => strip_tags(htmlspecialchars_decode(esc_js($this->neatest_trim(preg_replace('/\[[^\]]+\]/', '', preg_replace('/<!--(.*)-->/Uis', '', $post->post_content)), 360)))),
-        '__NC_PAGE_CREATED_AT__' => $post->post_date,
-      );
+      if (!$this->widgetEmptyCollect) {
+        $this->ncPageVariables = Array(
+          '__NC_PAGE_URL__' => get_permalink($post->ID),
+          '__NC_PAGE_IMAGE_URL__' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
+          '__NC_PAGE_TITLE__' => strip_tags(htmlspecialchars_decode(esc_js($post->post_title))),
+          '__NC_PAGE_DESCRIPTION__' => strip_tags(htmlspecialchars_decode(esc_js($this->neatest_trim(preg_replace('/\[[^\]]+\]/', '', preg_replace('/<!--(.*)-->/Uis', '', $post->post_content)), 360)))),
+          '__NC_PAGE_CREATED_AT__' => $post->post_date,
+        );
+      }
+
+      $tagList = '';
+      $tags = get_the_tags();
+
+      if ($tags) {
+        foreach ($tags as $tag) {
+          $tagList[] = $tag->name;
+        }
+
+        $this->ncPageVariables['__NC_PAGE_KEYWORDS__'] = implode(', ', $tagList);
+      }
     }
 
     $widgetScript = $this->loadWidget();
@@ -145,7 +159,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
     foreach ($new_instance as $property => $value) {
       $instance[$property] = $value;
-      
+
       unset($instance['errors'][$property]);
 
       if (empty($instance[$property]) && $property != self::FORM_PARAM_WIDGET_DOMAIN) {
@@ -205,15 +219,15 @@ class Nextclick_Page_Recommendations extends WP_Widget {
         </label>
       </p>
     </div>";
-    
+
     $formAttributesPanel .= $this->appendJquery();
 
     echo $formAttributesPanel;
   }
-  
+
   /**
    * Append jQuery script for enabling plugin advanced options
-   * 
+   *
    * @return string
    */
   private function appendJquery()
@@ -234,7 +248,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   /**
    * Checks whether widget can be displayed on a current site
    * and in which collection mode (either 0 or 1)
-   * 
+   *
    * @return bool
    */
   private function validateDisplayConditions()
@@ -245,7 +259,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
       is_singular('post') &&
       !current_user_can('manage_options') &&
       get_permalink() == 'http' . ($isSecure ? 's' : '') . '://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]
-    ) { 
+    ) {
       $this->widgetCollectMode = 1;
     }
 
@@ -254,7 +268,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
   /**
    * Generate widget javascript
-   * 
+   *
    * @return String
    */
   private function loadWidget()
@@ -263,7 +277,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
     $widgetScriptFilename = dirname(__FILE__) . '/' . '_widgetScript.txt';
 
     if (is_readable($widgetScriptFilename)) {
-      $widgetScript = file_get_contents($widgetScriptFilename);      
+      $widgetScript = file_get_contents($widgetScriptFilename);
       $widgetScript = str_replace(
                         Array('__WEBSITE_HOST__', '__WIDGET_KEY__', '__WIDGET_TYPE__', '__WIDGET_COLLECT_MODE__'),
                         Array((!empty($this->widgetDomain) ? $this->widgetDomain : $this->websiteHost), $this->widgetKey, $this->widgetType, $this->widgetCollectMode),
@@ -281,7 +295,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
 
    /**
    * Overload neatest_trim function which is not present in all WordPress versions
-   * 
+   *
    * @param string $content
    * @param int $chars
    * @return string
@@ -290,9 +304,8 @@ class Nextclick_Page_Recommendations extends WP_Widget {
     if (strlen($content) > $chars) {
       $content = str_replace('&nbsp;', ' ', $content);
       $content = str_replace("\n", '', $content);
-      // use with wordpress    
+      // use with wordpress
       $content = strip_tags(strip_shortcodes(trim($content)));
-      //$content = strip_tags(trim($content));
       $content = preg_replace('/\s+?(\S+)?$/', '', mb_substr($content, 0, $chars, "UTF-8"));
       $content = trim($content);
       if (substr($content, -1) == ',') $content = substr($content, 0, -1);

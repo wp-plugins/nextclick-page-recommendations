@@ -10,11 +10,11 @@
     __nc_page_description = '__NC_PAGE_DESCRIPTION__',
     __nc_page_keywords = '__NC_PAGE_KEYWORDS__';
 
-  __nc_widgets.push(['__WIDGET_KEY__', '__WEBSITE_HOST__', '__WIDGET_TYPE__', 1, __WIDGET_COLLECT_MODE__]);
+  __nc_widgets.push(['__WIDGET_KEY__', '__WEBSITE_HOST__', '__WIDGET_TYPE__', 1, __WIDGET_COLLECT_MODE__, 0, '__WIDGET_LANGUAGE__']);
 
   (function() {
     var __nc = document.createElement('script'); __nc.type = 'text/javascript'; __nc.async = true; __nc.id = 'Nextclick_Manager';
-    __nc.src = 'http://nextclick.pl/widget/widget.__WIDGET_TYPE__.1.js';
+    __nc.src = 'http://__NEXTCLICK_SITE__/widget/widget.__WIDGET_TYPE__.1.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(__nc, s);
   })();
 </script>

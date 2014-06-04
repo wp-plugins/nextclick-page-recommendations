@@ -305,7 +305,7 @@ class Nextclick_Page_Recommendations extends WP_Widget {
     $widgetScriptFilename = dirname(__FILE__) . '/' . '_widgetScript.txt';
 
     if (is_readable($widgetScriptFilename)) {
-      $widgetLanguage = $this->widgetLanguage ?: self::LANGUAGE_PL;
+      $widgetLanguage = $this->widgetLanguage ? $this->widgetLanguage : self::LANGUAGE_PL;
 
       $widgetScript = file_get_contents($widgetScriptFilename);      
       $widgetScript = str_replace(

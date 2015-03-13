@@ -4,7 +4,7 @@ Plugin Name: Nextclick Page Recommendations
 Plugin URI: http://www.nextclick.pl/
 Description: Generates a Nextclick Widget on your WP posts and pages. You need to have valid <a target="_blank" href="http://www.nextclick.pl">Nextclick</a> account.
 Author: LeadBullet S.A
-Version: 2.0.0
+Version: 2.0.1
 Author URI: http://www.leadbullet.pl
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -34,10 +34,12 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   // Available Nextclick widget types
   const TYPE_STANDARD_BOX = 'recommendation';
   const TYPE_FLOATING_BOX = 'floating';
+  const TYPE_CAROUSEL_BOX = 'carousel';
   
   const LANGUAGE_PL = 'pl';
   const LANGUAGE_RU = 'ru';
   const LANGUAGE_UA = 'ua';
+  const LANGUAGE_KZ = 'kz';
   
   const FORM_PARAM_WIDGET_KEY= 'nextclickWidgetKey';
   const FORM_PARAM_WIDGET_TYPE = 'nextclickWidgetType';
@@ -56,12 +58,14 @@ class Nextclick_Page_Recommendations extends WP_Widget {
   public static $WIDGET_TYPES = array(
     self::TYPE_STANDARD_BOX => 'Standard, placed in the middle of the site',
     self::TYPE_FLOATING_BOX => 'Floating, placed in the right bottom corner',
+    self::TYPE_CAROUSEL_BOX => 'Carousel, placed in the middle of the site',
   );
   
   public static $NEXTCLICK_SITES = array(
     self::LANGUAGE_PL => 'nextclick.pl',  
     self::LANGUAGE_RU => 'nextclick.com.ru',
     self::LANGUAGE_UA => 'nextclick.com.ua',
+    self::LANGUAGE_KZ => 'nextclick.com.kz',
   );
 
   /*
